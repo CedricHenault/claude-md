@@ -8,6 +8,7 @@ Mes règles de travail, mes réglages et mes skills pour [Claude Code](https://c
 | [`settings.json`](settings.json) | Mes réglages : modèle, plugins activés, thème, marketplaces, et les hooks qui tournent à chaque session. Le bloc `autoMode.environment` est retiré de la version publiée : il décrit la machine et un dépôt privé, et il se régénère localement. |
 | [`skills/`](skills) | Les quatre skills que j'ai écrits. Les skills tiers et ceux synchronisés depuis claude.ai ne sont pas ici : ils ne sont pas de moi. |
 | [`claude-md-controle.sh`](claude-md-controle.sh) | Le contrôle de démarrage décrit plus bas. |
+| [`chef-hooks.sh`](chef-hooks.sh) | Les garde-fous du skill `chef`, appelés par les hooks de `settings.json` : écriture de code refusée tant que le rôle est actif, dispatch sans `model` explicite refusé, quatrième aller-retour avec le même agent refusé. |
 
 ## Les skills
 
@@ -16,7 +17,9 @@ Mes règles de travail, mes réglages et mes skills pour [Claude Code](https://c
 - **`traduction-universelle`** — traduction de haute qualité, tous contenus et toutes langues.
 - **`turning-mistakes-into-checks`** — transformer une faute qu'on vient de me signaler en garde-fou durable.
 
-Les hooks déclarés dans `settings.json` appellent `~/.claude/chef-hooks.sh`, qui n'est pas publié ici.
+Les hooks déclarés dans `settings.json` appellent [`chef-hooks.sh`](chef-hooks.sh), publié ici. Il s'installe comme le script de contrôle : déposé dans `~/.claude/`, rendu exécutable avec `chmod +x`. Ses trois garde-fous ne s'activent que si `~/.claude/chef-actif` contient l'identifiant de la session en cours, si bien qu'un drapeau laissé par une session morte expire tout seul.
+
+Sa quatrième branche appelle `~/.claude/agents/verifier-ecurie.sh`, qui n'est pas publié : l'écurie d'agents est propre à mes projets. Sans ce script la branche n'échoue pas, elle signale simplement que l'inventaire est introuvable.
 
 ## Les règles du CLAUDE.md
 
