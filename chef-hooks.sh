@@ -3,11 +3,24 @@
 # Les branches ecriture / dispatch / rondes ne s'activent que si
 # ~/.claude/chef-actif contient l'id de la session en cours : un drapeau laisse
 # par une session morte ne matche plus jamais, donc il expire tout seul.
+#
+# ET SEULEMENT SUR LE FIL PRINCIPAL. Un sous-agent herite du session_id de la
+# session qui l'a dispatche — c'est documente : « When a subagent calls a tool,
+# tool events such as PreToolUse and PostToolUse fire the same configured hooks
+# as in the main conversation ». Le drapeau seul bloquait donc l'agent exactement
+# comme le maitre d'oeuvre, et aucun lot ne pouvait etre ecrit par personne.
+# `agent_id` est le discriminant documente : « Unique identifier for the subagent
+# or in-process teammate the hook fires in » — vide sur le fil principal, rempli
+# dans un sous-agent ou un coequipier en processus.
+# Ne pas tester `agent_type` a sa place : il est aussi rempli sur le fil
+# principal quand la session est lancee avec --agent.
+# Origine : incident reel du 2026-11-08, chantier « films sur les pieces ».
 set -uo pipefail
 payload=$(cat)
 sid=$(printf '%s' "$payload" | jq -r '.session_id // empty')
+agent=$(printf '%s' "$payload" | jq -r '.agent_id // empty')
 actif=0
-[ -n "$sid" ] && [ -f "$HOME/.claude/chef-actif" ] \
+[ -z "$agent" ] && [ -n "$sid" ] && [ -f "$HOME/.claude/chef-actif" ] \
   && grep -qxF "$sid" "$HOME/.claude/chef-actif" && actif=1
 
 deny() {
