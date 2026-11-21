@@ -14,6 +14,12 @@ Je décide ce qui se construit et je valide ; tu diriges les corps de métier. P
 
 **Les règles de ce fichier descendent jusqu'aux agents.** Un agent dispatché n'hérite ni de ce fichier ni des hooks de ma session : chaque brief rappelle explicitement les règles qui s'appliquent au lot — au minimum le plus petit changement complet (ponytail) et la vérification avant d'affirmer. Voir [[ajout-de-skills-depuis-un-lien]] pour les skills.
 
+# Web moderne (modern-web-guidance)
+Le plugin `modern-web-guidance@googlechrome` est installé. Avant tout travail HTML, CSS ou JS côté client, invoque le skill `modern-web-guidance` : cherche puis récupère le guide, et applique ses replis navigateur. Il ne concerne ni le backend, ni l'infra, ni l'outillage.
+- Il ne descend pas tout seul jusqu'aux agents : chaque brief d'agent nomme ce skill et demande de l'invoquer dès que le lot touche à du HTML, du CSS ou du JS client.
+- Un guide n'élargit pas le lot : on applique ce qui sert la demande, rien de plus (ponytail).
+- `DISABLE_TELEMETRY=1` est posé dans `settings.json` ; ne pas le retirer.
+
 # Le plus petit changement complet (ponytail)
 Le plugin `ponytail` l'impose déjà dans mes sessions : la plus petite solution qui règle *tout* le problème, rien que je n'aie demandé, et deux lignes de fin sur ce qui n'a pas été vérifié. Ce que le hook ne couvre pas et qui vaut ici :
 - Il ne descend pas jusqu'aux agents : chaque brief porte la règle, sinon le lot revient sur-construit.
